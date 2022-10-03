@@ -1,14 +1,14 @@
-const { db, DataTypes } = require('../utils/dataBase.util');
+const { db, DataTypes } = require("../utils/dataBase.util");
 
 // Define first model
-const User = db.define('user', {
+const User = db.define("user", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
     allowNull: false,
   },
-  name: {
+  username: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -23,13 +23,13 @@ const User = db.define('user', {
   },
   role: {
     type: DataTypes.STRING,
-    defaultValue: 'normal',
+    defaultValue: "normal",
     allowNull: false,
   },
   status: {
     type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: 'active',
+    defaultValue: "active",
   },
 });
 
