@@ -3,6 +3,7 @@ const express = require("express");
 // Routers
 const { usersRouter } = require("./routes/users.routes");
 const { productsRoutes } = require("./routes/products.routes");
+const {} = require("./routes/productsInCart.routes");
 
 // Controllers
 const { globalErrorHandler } = require("./controllers/error.controller");
