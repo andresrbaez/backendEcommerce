@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const dotenv = require('dotenv');
 
-dotenv.config({ path: './config.env'})
+dotenv.config({ path: './config.env' });
 
 // Establish data base connection
 const db = new Sequelize({
@@ -12,6 +12,15 @@ const db = new Sequelize({
   port: process.env.DB_PORT,
   database: process.env.DB,
   logging: false,
+  dialectOptions:
+    process.env.NODE_ENV === 'production'
+      ? {
+          ssl: {
+            required: true,
+            rejectUnauthorized: false,
+          },
+        }
+      : {},
 });
 
 module.exports = { db, DataTypes };

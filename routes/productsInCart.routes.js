@@ -13,12 +13,12 @@ const {} = require("../middlewares/productsInCart.middlewares");
 const {} = require("../middlewares/auth.middlewares");
 const {} = require("../middlewares/validators.middlewares");
 
-const productsInCartRoutes = express.Router();
+const productsInCartRouter = express.Router();
 
 //Products in cart endpoints
-productsInCartRoutes.post("/add-product", addProductInCar);
-productsInCartRoutes.patch("/update-product", updateProductIncar);
-productsInCartRoutes.delete("/:productid", deleteProductInCar);
-productsInCartRoutes.post("/purchase", purchasePropductInCar);
+productsInCartRouter.post("/add-product", addProductInCar);
+productsInCartRouter.patch("/update-product", updateProductIncar);
+productsInCartRouter.delete("/:productid", deleteProductInCar);
+productsInCartRouter.post("/purchase", purchasePropductInCar);
 
-module.exports = { productsInCartRoutes };
+module.exports = { productsInCartRouter };

@@ -20,14 +20,31 @@ const {
 const {} = require("../middlewares/auth.middlewares");
 const {} = require("../middlewares/validators.middlewares");
 
-const productsRoutes = express.Router();
+// Utils
+const { upload } = require('../utils/multer.util')
+
+const productsRouter = express.Router();
+
+// Protecting below endpoints
+productsRouter.use(protectSession);
+
+
 //Products endpoints
-productsRoutes.post("/", createProduct);
-productsRoutes.get("/", getAllProducts);
-productsRoutes.get("/:id", getProductById);
-productsRoutes.patch("/:id", updateProduct);
-productsRoutes.delete("/:id", deleteProducts);
-productsRoutes.get("/categories", getAllCategories);
-productsRoutes.post("/categories", newCategory);
-productsRoutes.patch("/categories", updateCategory);
-module.exports = { productsRoutes };
+productsRouter.post("/", upload.array('productImg', 5), createProduct);
+
+productsRouter.get("/", getAllProducts);
+
+productsRouter.get("/:id", getProductById);
+
+productsRouter.patch("/:id", updateProduct);
+
+productsRouter.delete("/:id", deleteProducts);
+
+productsRouter.get("/categories", getAllCategories);
+
+productsRouter.post("/categories", newCategory);
+
+productsRouter.patch("/categories", updateCategory);
+
+
+module.exports = { productsRouter };
