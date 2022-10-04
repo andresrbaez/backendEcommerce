@@ -1,10 +1,11 @@
-const express = require('express');
+const express = require("express");
 
 // Routers
-const { usersRouter } = require('./routes/users.routes')
+const { usersRouter } = require("./routes/users.routes");
+const { productsRoutes } = require("./routes/products.routes");
 
 // Controllers
-const { globalErrorHandler } = require('./controllers/error.controller')
+const { globalErrorHandler } = require("./controllers/error.controller");
 
 // Init our Express app
 const app = express();
@@ -13,16 +14,16 @@ const app = express();
 app.use(express.json()); // Middleware
 
 // Define endpoints
-app.use('/api/v1/users', usersRouter);
+app.use("/api/v1/users", usersRouter);
+app.use("/api/v1/products", productsRoutes);
 
 // Global error handler
-app.use(globalErrorHandler)
+app.use(globalErrorHandler);
 
 // Catch non-existing endpoints
-app.all('*', (req, res) => {
-    
+app.all("*", (req, res) => {
   res.status(404).json({
-    status: 'error',
+    status: "error",
     message: `${req.method} ${req.url} doesn't exists in our server`,
   });
 });
