@@ -29,13 +29,10 @@ const { upload } = require("../utils/multer.util");
 
 const productsRouter = express.Router();
 
-// Protecting below endpoints
-productsRouter.use(protectSession);
-
 //Products endpoints
+productsRouter.get("/categories", getAllCategories);
 productsRouter.get("/", getAllProducts);
 productsRouter.get("/:id", getProductById);
-productsRouter.get("/categories", getAllCategories);
 
 // Protecting below endpoints
 productsRouter.use(protectSession);

@@ -3,6 +3,7 @@ const { ref, uploadBytes, getDownloadURL } = require("firebase/storage");
 //Models
 const { Product } = require("../models/product.model");
 const { Categories } = require("../models/categories.model");
+const { User } = require("../models/user.model");
 const { ProductImg } = require("../models/productImg.model");
 
 //Utils
@@ -12,22 +13,37 @@ const {
   uploadProductImgs,
   getProductImgsUrls,
 } = require("../utils/firebase.util");
+const { AppError } = require("../utils/appError.util");
 
 const createProduct = catchAsync(async (req, res, next) => {
-  const { title, description, price, categoryId, quantity } = req.body;
-  const { category } = req;
+  const { sessionUser } = req;
+  const { title, description, quantity, price, categoryId } = req.body;
 
-  if (categoryId === category.id) {
-    const newProduct = await Product.create({
-      title,
-      description,
-      price,
-      categoryId,
-      quantity,
-    });
-  } else {
-    return next(new AppError("Category not found", 400));
-  }
+  const newProduct = await Product.create({
+        title,
+        description,
+        quantity,
+        categoryId,
+        price,
+        userId: sessionUser.id,
+      });
+
+
+
+  // const { title, description, price, categoryId, quantity } = req.body;
+  // const { category } = req;
+
+  // if (categoryId === category.id) {
+  //   const newProduct = await Product.create({
+  //     title,
+  //     description,
+  //     price,
+  //     categoryId,
+  //     quantity,
+  //   });
+  // } else {
+  //   return next(new AppError("Category not found", 400));
+  // }
 
   await uploadProductImgs(req.files, newProduct.id);
 
@@ -41,6 +57,8 @@ const getAllProducts = catchAsync(async (req, res, next) => {
   const products = await Product.findAll({
     where: { status: "active" },
     include: [
+      { model: Categories, attributes: ['name'] },
+      { model: User, attributes: ['username', 'email'] },
       {
         model: ProductImg,
       },
@@ -56,42 +74,48 @@ const getAllProducts = catchAsync(async (req, res, next) => {
 });
 
 const getProductById = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const product = await Product.findOne({
-    where: { id },
-  });
+  const { product } = req;
+  res.status(200).json({product})
 
-  res.status(200).json({
-    status: "success",
-    data: {
-      product,
-    },
-  });
+
+
+
+  // const { id } = req;
+  // const product = await Product.findOne({
+  //   where: { id },
+  // });
+
+  // res.status(200).json({
+  //   status: "success",
+  //   data: {
+  //     product,
+  //   },
+  // });
 });
 
 const updateProduct = catchAsync(async (req, res, next) => {
-  const { title, description, price, quantity } = req.body;
   const { product } = req;
+  const { title, description, quantity, price } = req.body;
 
   await product.update({
     title,
     description,
-    price,
     quantity,
+    price,
   });
 
   res.status(200).json({
     status: "success",
-    data: { product },
+    // data: { product },
   });
 });
 
 const deleteProducts = catchAsync(async (req, res, next) => {
   const { product } = req;
 
-  await product.update({ status: "deleted" });
+  await product.update({ status: "removed" });
 
-  res.status(204).json({ status: "success" });
+  res.status(200).json({ status: "success" });
 });
 
 const getAllCategories = catchAsync(async (req, res, next) => {
@@ -110,24 +134,47 @@ const getAllCategories = catchAsync(async (req, res, next) => {
 const newCategory = catchAsync(async (req, res, next) => {
   const { name } = req.body;
 
-  const categorie = await Categories.create({ name });
+  if (name.length === 0) {
+    return next(new AppError('Name cannot be empty', 400))
+  }
+
+  const newCategory = await Categories.create({ name });
 
   res.status(201).json({
     status: "success",
-    data: { categorie },
+    data: { newCategory },
   });
 });
 
 const updateCategory = catchAsync(async (req, res, next) => {
-  const { name } = req.body;
-  const { category } = req;
+  const { newName } = req.body;
+  const { id } = req.params;
 
-  await category.update({ name });
-
-  res.status(200).json({
-    status: "success",
-    data: { category },
+  const category = await Categories.findOne({
+    where: { id, status: 'active' },
   });
+
+  if (!category) {
+    return next(new AppError('Category does not exits with given id', 404));
+  }
+
+  if (newName.length === 0) {
+    return next(new AppError('The updated name cannot be empty', 400));
+  }
+
+  await category.update({ name: newName });
+
+  res.status(200).json({ status: 'success' });
+
+  // const { name } = req.body;
+  // const { category } = req;
+
+  // await category.update({ name });
+
+  // res.status(200).json({
+  //   status: "success",
+  //   data: { category },
+  // });
 });
 
 module.exports = {

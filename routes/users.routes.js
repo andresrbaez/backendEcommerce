@@ -8,6 +8,9 @@ const {
   updateUser,
   deleteUser,
   login,
+  getAllProductsCreated,
+  getAllOrders,
+  getOrderById,
 } = require("../controllers/users.controller");
 
 // Middlewares
@@ -32,10 +35,15 @@ usersRouter.post("/login", login);
 usersRouter.use(protectSession);
 
 // Users endpoints
-usersRouter.get("/", getAllUsers);
+usersRouter.get("/me", getAllProductsCreated);
 
 usersRouter.patch("/:id", userExists, protectUsersAccount, updateUser);
 
 usersRouter.delete("/:id", userExists, protectUsersAccount, deleteUser);
+
+usersRouter.get("/orders", );
+
+usersRouter.get("/orders/:id", );
+
 
 module.exports = { usersRouter };
