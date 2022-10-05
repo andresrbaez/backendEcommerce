@@ -1,14 +1,16 @@
 //Models
 const { ProductsInCart } = require("../models/productsInCart.model");
+const { Cart } = require("../models/cart.model");
 
 //Utils
 const { catchAsync } = require("../utils/catchAsync.util");
 
 const addProductInCar = catchAsync(async (req, res, next) => {
   const { productId, quantity } = req.body;
+  const { cartId } = req;
 
   const addproduct = await ProductsInCart.create({
-    cartId: 1,
+    cartId: cartId.id,
     productId,
     quantity,
   });
@@ -34,19 +36,24 @@ const updateProductIncar = catchAsync(async (req, res, next) => {
 });
 
 const deleteProductInCar = catchAsync(async (req, res, next) => {
-  const { producInCar } = req;
+  const { productInCar } = req;
 
-  await producInCar.update({ status: "removed" });
+  await productInCar.update({ quantity: 0, status: "removed" });
 
   res.status(204).json({ status: "success" });
 });
 
 const purchasePropductInCar = catchAsync(async (req, res, next) => {
-  //Atencion en esta seccion,
-  //Primero restar la quantity, actualizar el producto y la cantidad en stoke
-  //calcular el precio total
-  //marcar producto con status purchased
-  //crear registro o bien, crear con lo anterior el modelo order
+  const { neworder } = req;
+  const { sessionUser } = req;
+  const { totalPrice } = req;
+  const { cartExist } = req;
+
+  await neworder.create({
+    userId: sessionUser.id,
+    cartId: cartExist.id,
+    totalprice: totalPrice,
+  });
 });
 
 module.exports = {
