@@ -81,6 +81,6 @@ const createCategoriesValidator = [
 
 module.exports = {
   createUserValidators,
-  createProductValidators,
+  createProductValidator,
   createCategoriesValidator,
 };

@@ -20,7 +20,7 @@ const {
 
 const { protectSession } = require("../middlewares/auth.middlewares");
 const {
-  createProductValidators,
+  createProductValidator,
   createCategoriesValidator,
 } = require("../middlewares/validators.middlewares");
 
@@ -43,7 +43,7 @@ productsRouter.use(protectSession);
 productsRouter.post(
   "/",
   upload.array("productImg", 5),
-  createProductValidators,
+  createProductValidator,
   createProduct
 );
 
