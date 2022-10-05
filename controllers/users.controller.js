@@ -14,10 +14,6 @@ const { AppError } = require("../utils/appError.util");
 dotenv.config({ path: "./config.env" });
 
 const getAllUsers = catchAsync(async (req, res, next) => {
-  // Include all the post that the user has created
-  // Include the comments of the user's posts
-  // Include the author of each comment
-  // Include all the comments that the user has created
 
   const users = await User.findAll({
     attributes: { exclude: ["password"] },
@@ -33,7 +29,7 @@ const getAllUsers = catchAsync(async (req, res, next) => {
 });
 
 const createUser = catchAsync(async (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { username, email, password, role } = req.body;
 
   if (role !== "admin" && role !== "normal") {
     return next(new AppError("Invalid role", 400));
@@ -44,9 +40,10 @@ const createUser = catchAsync(async (req, res, next) => {
   const hashedPassword = await bcrypt.hash(password, salt);
 
   const newUser = await User.create({
-    name,
+    username,
     email,
     password: hashedPassword,
+    role
   });
 
   // Remove password from response
