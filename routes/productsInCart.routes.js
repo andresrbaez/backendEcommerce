@@ -10,10 +10,11 @@ const {
 
 //Middlewares
 const {} = require("../middlewares/productsInCart.middlewares");
-const {} = require("../middlewares/auth.middlewares");
-const {} = require("../middlewares/validators.middlewares");
+const { protectSession } = require("../middlewares/auth.middlewares");
 
 const productsInCartRouter = express.Router();
+
+productsInCartRouter.use(protectSession);
 
 //Products in cart endpoints
 productsInCartRouter.post("/add-product", addProductInCar);
