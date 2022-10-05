@@ -17,7 +17,7 @@ const {
   productExist,
   categoryExist,
 } = require("../middlewares/products.middlewares");
-const {} = require("../middlewares/auth.middlewares");
+const {protectSession} = require("../middlewares/auth.middlewares");
 const {} = require("../middlewares/validators.middlewares");
 
 // Utils
