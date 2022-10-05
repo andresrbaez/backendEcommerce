@@ -10,12 +10,12 @@ const productExist = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
   const product = await Product.findOne({
-    where: { id },
+    where: { id, status: 'active' },
   });
 
   //  If user doesn't exist, send error message
   if (!product) {
-    return next(new AppError("Product not found", 400));
+    return next(new AppError("Could not find product by given id", 404));
   }
   // req.anyPropName = 'anyValue'
   req.product = product;
