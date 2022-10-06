@@ -1,5 +1,3 @@
-const { ref, uploadBytes, getDownloadURL } = require("firebase/storage");
-
 //Models
 const { Product } = require("../models/product.model");
 const { Categories } = require("../models/categories.model");
@@ -20,15 +18,13 @@ const createProduct = catchAsync(async (req, res, next) => {
   const { title, description, quantity, price, categoryId } = req.body;
 
   const newProduct = await Product.create({
-        title,
-        description,
-        quantity,
-        categoryId,
-        price,
-        userId: sessionUser.id,
-      });
-
-
+    title,
+    description,
+    quantity,
+    categoryId,
+    price,
+    userId: sessionUser.id,
+  });
 
   // const { title, description, price, categoryId, quantity } = req.body;
   // const { category } = req;
@@ -57,8 +53,8 @@ const getAllProducts = catchAsync(async (req, res, next) => {
   const products = await Product.findAll({
     where: { status: "active" },
     include: [
-      { model: Categories, attributes: ['name'] },
-      { model: User, attributes: ['username', 'email'] },
+      { model: Categories, attributes: ["name"] },
+      { model: User, attributes: ["username", "email"] },
       {
         model: ProductImg,
       },
@@ -75,22 +71,14 @@ const getAllProducts = catchAsync(async (req, res, next) => {
 
 const getProductById = catchAsync(async (req, res, next) => {
   const { product } = req;
-  res.status(200).json({product})
+  await Product.findOne({});
 
-
-
-
-  // const { id } = req;
-  // const product = await Product.findOne({
-  //   where: { id },
-  // });
-
-  // res.status(200).json({
-  //   status: "success",
-  //   data: {
-  //     product,
-  //   },
-  // });
+  res.status(200).json({
+    status: "success",
+    data: {
+      product,
+    },
+  });
 });
 
 const updateProduct = catchAsync(async (req, res, next) => {
@@ -106,7 +94,7 @@ const updateProduct = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: "success",
-    // data: { product },
+    data: { product },
   });
 });
 
@@ -135,7 +123,7 @@ const newCategory = catchAsync(async (req, res, next) => {
   const { name } = req.body;
 
   if (name.length === 0) {
-    return next(new AppError('Name cannot be empty', 400))
+    return next(new AppError("Name cannot be empty", 400));
   }
 
   const newCategory = await Categories.create({ name });
@@ -151,30 +139,20 @@ const updateCategory = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
   const category = await Categories.findOne({
-    where: { id, status: 'active' },
+    where: { id, status: "active" },
   });
 
   if (!category) {
-    return next(new AppError('Category does not exits with given id', 404));
+    return next(new AppError("Category does not exits with given id", 404));
   }
 
   if (newName.length === 0) {
-    return next(new AppError('The updated name cannot be empty', 400));
+    return next(new AppError("The updated name cannot be empty", 400));
   }
 
   await category.update({ name: newName });
 
-  res.status(200).json({ status: 'success' });
-
-  // const { name } = req.body;
-  // const { category } = req;
-
-  // await category.update({ name });
-
-  // res.status(200).json({
-  //   status: "success",
-  //   data: { category },
-  // });
+  res.status(200).json({ status: "success" });
 });
 
 module.exports = {

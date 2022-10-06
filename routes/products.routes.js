@@ -32,7 +32,7 @@ const productsRouter = express.Router();
 //Products endpoints
 productsRouter.get("/categories", getAllCategories);
 productsRouter.get("/", getAllProducts);
-productsRouter.get("/:id", getProductById);
+productsRouter.get("/:id", productExist, getProductById);
 
 // Protecting below endpoints
 productsRouter.use(protectSession);

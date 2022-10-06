@@ -1,11 +1,16 @@
-const { initializeApp } = require('firebase/app');
-const { getStorage, ref, uploadBytes } = require('firebase/storage');
-const dotenv = require('dotenv');
+const { initializeApp } = require("firebase/app");
+const {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+} = require("firebase/storage");
+const dotenv = require("dotenv");
 
 // Model
-const { ProductImg } = require('../models/productImg.model');
+const { ProductImg } = require("../models/productImg.model");
 
-dotenv.config({ path: './config.env' });
+dotenv.config({ path: "./config.env" });
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -25,9 +30,9 @@ const storage = getStorage(firebaseApp);
 const uploadProductImgs = async (imgs, productId) => {
   try {
     // Map async
-    const imgsPromises = imgs.map(async img => {
+    const imgsPromises = imgs.map(async (img) => {
       // Create unique filename
-      const [filename, extension] = img.originalname.split('.');
+      const [filename, extension] = img.originalname.split(".");
       const productImg = `${
         process.env.NODE_ENV
       }/products/${productId}/${filename}-${Date.now()}.${extension}`;
@@ -48,7 +53,6 @@ const uploadProductImgs = async (imgs, productId) => {
   } catch (error) {
     console.log(error);
   }
-
 
   // // Map async -> Async operations with arrays
   // const imgsPromises = imgs.map(async (img) => {

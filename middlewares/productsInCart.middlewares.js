@@ -40,7 +40,7 @@ const maxItemsLimit = catchAsync(async (req, res, next) => {
   next();
 });
 
-const productAddExist = catchAsync(async (req, res, next) => {
+/*const productAddExist = catchAsync(async (req, res, next) => {
   const { productId } = req.body;
 
   const product = await ProductsInCart.findOne({ where: { productId } });
@@ -58,9 +58,9 @@ const productAddExist = catchAsync(async (req, res, next) => {
   }
 
   next();
-});
+});*/
 
-const updateProductStatus = catchAsync(async (req, res, next) => {
+/*const updateProductStatus = catchAsync(async (req, res, next) => {
   const { quantity } = req.body;
 
   if (quantity === 0) {
@@ -68,13 +68,13 @@ const updateProductStatus = catchAsync(async (req, res, next) => {
   }
 
   next();
-});
+});*/
 
 const deleteProduct = catchAsync(async (req, res, next) => {
-  const { productId } = req.param;
+  const { id } = req.params;
 
   const productInCar = await ProductsInCart.findOne({
-    where: { productId },
+    where: { productId: id },
   });
 
   if (!productInCar) {
@@ -86,13 +86,11 @@ const deleteProduct = catchAsync(async (req, res, next) => {
   next();
 });
 
-const buyProducts = catchAsync(async (req, res, next) => {
+/*const buyProducts = catchAsync(async (req, res, next) => {
   const { sessionUser } = req;
 
-  const userId = sessionUser.id;
-
   const cartExist = await Cart.findOne({
-    where: { userId, status: "active" },
+    where: { userId: sessionUser.id, status: "active" },
     include: {
       model: ProductsInCart,
     },
@@ -102,27 +100,24 @@ const buyProducts = catchAsync(async (req, res, next) => {
     return next(new AppError("You not have a cart with products", 400));
   }
 
-  const productId = cartExist.productId;
-  const lastQuantity = await Product.findOne({ where: { productId } });
-  const newQuantity = cartExist.quantity - lastQuantity.quantity;
-
+  const productId = await ProductsInCart.findOne({
+    where: { cartId: cartExist.id },
+  });
+  const lastQuantity = await Product.findOne({ where: { id: productId.id } });
+  const newQuantity = productId.quantity - lastQuantity.quantity;
   await lastQuantity.update({ quantity: newQuantity });
 
-  const totalPrice = cartExist.quantity * lastQuantity.price;
-
-  await ProductsInCart.update({ status: "purchased" });
+  await productId.update({ status: "purchased" });
   await cartExist.update({ status: "purchased" });
 
   req.totalPrice = totalPrice;
   req.cartExist = cartExist;
+  req.lastQuantity = lastQuantity;
   next();
-});
+});*/
 
 module.exports = {
   cartExist,
   maxItemsLimit,
-  productAddExist,
-  updateProductStatus,
   deleteProduct,
-  buyProducts,
 };
